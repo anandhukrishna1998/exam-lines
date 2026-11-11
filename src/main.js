@@ -305,7 +305,6 @@ export function createApp() {
           resolve();
         }
       }, ms);
-      if (t && typeof t.unref === 'function') t.unref();
       Promise.resolve(maybePromise).then(
         () => {
           if (!done) {
