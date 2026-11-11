@@ -50,6 +50,76 @@ export function themeSwitch(actions) {
   return btn;
 }
 
+export function isFullscreenActive(app) {
+  if (app && app.isFullscreen) return true;
+  if (typeof document === 'undefined') return false;
+  return Boolean(
+    document.fullscreenElement ||
+    document.webkitFullscreenElement ||
+    document.mozFullScreenElement ||
+    document.msFullscreenElement ||
+    (document.documentElement && document.documentElement.getAttribute('data-fullscreen') === 'true')
+  );
+}
+
+export function syncFullscreenButton(isFs) {
+  if (typeof document === 'undefined') return;
+  const btn = document.getElementById('fs-toggle');
+  if (!btn) return;
+  btn.setAttribute('aria-pressed', isFs ? 'true' : 'false');
+  btn.setAttribute('aria-label', isFs ? 'Exit full screen' : 'Full screen');
+  btn.setAttribute('title', isFs ? 'Exit full screen' : 'Enter full screen');
+  btn.classList.toggle('active', Boolean(isFs));
+  const labelEl = btn.querySelector('.fs-label');
+  if (labelEl) {
+    labelEl.textContent = isFs ? 'Exit full screen' : 'Full screen';
+  }
+}
+
+export function fullscreenSwitch(app, actions) {
+  const active = isFullscreenActive(app);
+
+  const enterIcon = svgEl('svg', { viewBox: '0 0 24 24', width: '16', height: '16', class: 'icon-fs-enter', 'aria-hidden': 'true' },
+    svgEl('path', {
+      d: 'M4 9V4h5 M20 9V4h-5 M4 15v5h5 M20 15v5h-5',
+      fill: 'none',
+      stroke: 'currentColor',
+      'stroke-width': '2',
+      'stroke-linecap': 'round',
+      'stroke-linejoin': 'round'
+    })
+  );
+
+  const exitIcon = svgEl('svg', { viewBox: '0 0 24 24', width: '16', height: '16', class: 'icon-fs-exit', 'aria-hidden': 'true' },
+    svgEl('path', {
+      d: 'M9 4v5H4 M15 4v5h5 M9 20v-5H4 M15 20v-5h5',
+      fill: 'none',
+      stroke: 'currentColor',
+      'stroke-width': '2',
+      'stroke-linecap': 'round',
+      'stroke-linejoin': 'round'
+    })
+  );
+
+  return h('button', {
+    id: 'fs-toggle',
+    class: `btn quiet fs-toggle${active ? ' active' : ''}`,
+    'aria-pressed': active ? 'true' : 'false',
+    'aria-label': active ? 'Exit full screen' : 'Full screen',
+    title: active ? 'Exit full screen' : 'Enter full screen',
+    onclick: (e) => {
+      e.preventDefault();
+      if (actions && typeof actions.toggleFullscreen === 'function') {
+        actions.toggleFullscreen();
+      }
+    }
+  },
+    enterIcon,
+    exitIcon,
+    h('span', { class: 'fs-label' }, active ? 'Exit full screen' : 'Full screen')
+  );
+}
+
 export function brandMark() {
   return svgEl('svg', { viewBox: '0 0 38 22', width: '38', height: '22', class: 'brand-mark' },
     svgEl('path', { d: 'M3 11 H35', stroke: 'var(--l1)', 'stroke-width': '6', 'stroke-linecap': 'round' }),
@@ -182,6 +252,7 @@ export function appHeader(app, actions) {
   const nav = h('nav', { class: 'topnav' },
     aiBtn,
     historyBtn,
+    fullscreenSwitch(app, actions),
     themeSwitch(actions)
   );
 

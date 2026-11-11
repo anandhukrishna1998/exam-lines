@@ -194,15 +194,19 @@ export function renderQuiz(root, app, actions) {
     `Keys: 1 to ${q.options ? q.options.length : 4} answer, N next, P previous, F flag`
   );
 
+  const quizStage = h('div', { class: 'quiz-stage' },
+    stemEl,
+    multiHint,
+    optionsGroup,
+    feedbackEl
+  );
+
   mount(root,
     appHeader(app, actions),
     h('main', { class: 'page-quiz' },
       routeNav,
       nowAt,
-      stemEl,
-      multiHint,
-      optionsGroup,
-      feedbackEl,
+      quizStage,
       toolbar,
       keyHints
     ),

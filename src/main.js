@@ -40,7 +40,7 @@ import { AWS_BANK } from './bank/aws/index.js';
 import { fmtClock } from './ui/dom.js';
 import { keyAction } from './ui/keys.js';
 import { runtimeRefresh } from './ui/viewmodels.js';
-import { refreshChips } from './ui/chrome.js';
+import { refreshChips, syncFullscreenButton } from './ui/chrome.js';
 import { sourcePanel, renderHome } from './ui/home.js';
 import { renderQuiz } from './ui/quiz.js';
 import { renderResults } from './ui/results.js';
@@ -127,6 +127,7 @@ export function createApp() {
     overlay: null,
     prefs,
     drawn: {},
+    isFullscreen: false,
     libraryStore: localLibraryStore(ls),
     aiConfig,
     builtInClaude: typeof window !== 'undefined' && !!window.claude,
@@ -135,6 +136,7 @@ export function createApp() {
   let renderPending = false;
   let timerId = null;
   let lastQuizIndex = -1;
+  let nativeFsActive = false;
 
   const views = {
     home: renderHome,
@@ -206,6 +208,15 @@ export function createApp() {
     }
   }
 
+  function scrollTop(instant = false) {
+    if (typeof window !== 'undefined' && typeof window.scrollTo === 'function') {
+      window.scrollTo({ top: 0, behavior: instant ? 'instant' : 'auto' });
+    }
+    if (typeof document !== 'undefined' && document.documentElement) {
+      document.documentElement.scrollTop = 0;
+    }
+  }
+
   function startSession(mode, questions, section) {
     if (!questions || questions.length === 0) {
       app.overlay = {
@@ -236,9 +247,7 @@ export function createApp() {
     }
 
     scheduleRender();
-    if (typeof window !== 'undefined') {
-      window.scrollTo({ top: 0, behavior: 'instant' });
-    }
+    scrollTop(true);
   }
 
   function endSession() {
@@ -253,9 +262,7 @@ export function createApp() {
     app.result = result;
     app.view = 'results';
     scheduleRender();
-    if (typeof window !== 'undefined') {
-      window.scrollTo({ top: 0, behavior: 'instant' });
-    }
+    scrollTop(true);
   }
 
   function onRuntimeChange(kind, examId) {
@@ -275,6 +282,101 @@ export function createApp() {
     }
   }
 
+  function nativeFullscreenEl() {
+    if (typeof document === 'undefined') return null;
+    return (
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement ||
+      null
+    );
+  }
+
+  function settleQuickly(maybePromise, ms = 60) {
+    if (!maybePromise || typeof maybePromise.then !== 'function') {
+      return Promise.resolve();
+    }
+    return new Promise((resolve) => {
+      let done = false;
+      const t = setTimeout(() => {
+        if (!done) {
+          done = true;
+          resolve();
+        }
+      }, ms);
+      if (t && typeof t.unref === 'function') t.unref();
+      Promise.resolve(maybePromise).then(
+        () => {
+          if (!done) {
+            done = true;
+            clearTimeout(t);
+            resolve();
+          }
+        },
+        () => {
+          if (!done) {
+            done = true;
+            clearTimeout(t);
+            resolve();
+          }
+        }
+      );
+    });
+  }
+
+  function requestNativeFullscreen(html) {
+    if (!html) return null;
+    const req =
+      html.requestFullscreen ||
+      html.webkitRequestFullscreen ||
+      html.webkitRequestFullScreen ||
+      html.mozRequestFullScreen ||
+      html.msRequestFullscreen;
+    if (typeof req !== 'function') return null;
+
+    try {
+      const p = req === html.requestFullscreen
+        ? html.requestFullscreen({ navigationUI: 'hide' })
+        : req.call(html);
+      if (p && typeof p.then === 'function') {
+        return p.then(
+          () => {
+            if (nativeFullscreenEl()) nativeFsActive = true;
+          },
+          () => {
+            if (req === html.requestFullscreen) {
+              try {
+                const retry = html.requestFullscreen();
+                if (retry && typeof retry.then === 'function') {
+                  return retry.then(
+                    () => { if (nativeFullscreenEl()) nativeFsActive = true; },
+                    () => {}
+                  );
+                }
+              } catch {}
+            }
+          }
+        );
+      }
+      if (nativeFullscreenEl()) nativeFsActive = true;
+      return null;
+    } catch {
+      if (req === html.requestFullscreen) {
+        try {
+          const retry = html.requestFullscreen();
+          if (retry && typeof retry.then === 'function') {
+            return retry.then(
+              () => { if (nativeFullscreenEl()) nativeFsActive = true; },
+              () => {}
+            );
+          }
+        } catch {}
+      }
+      return null;
+    }
+  }
+
   const actions = {
     goHome() {
       if (app.view === 'quiz' && app.session && !app.session.finishedAt) {
@@ -284,7 +386,7 @@ export function createApp() {
       }
       app.view = 'home';
       scheduleRender();
-      if (typeof window !== 'undefined') window.scrollTo({ top: 0 });
+      scrollTop();
     },
 
     showHistory() {
@@ -295,7 +397,7 @@ export function createApp() {
       }
       app.view = 'history';
       scheduleRender();
-      if (typeof window !== 'undefined') window.scrollTo({ top: 0 });
+      scrollTop();
     },
 
     leaveSession() {
@@ -304,7 +406,7 @@ export function createApp() {
       app.overlay = null;
       app.view = 'home';
       scheduleRender();
-      if (typeof window !== 'undefined') window.scrollTo({ top: 0 });
+      scrollTop();
     },
 
     switchExam(id) {
@@ -550,10 +652,72 @@ export function createApp() {
       }
       return next === 'dark';
     },
+
+    async toggleFullscreen() {
+      if (typeof document === 'undefined') return false;
+      const html = document.documentElement;
+      const nat = nativeFullscreenEl();
+      const attrFs = html && html.getAttribute('data-fullscreen') === 'true';
+
+      if (nat || attrFs || app.isFullscreen) {
+        nativeFsActive = false;
+        if (html) html.removeAttribute('data-fullscreen');
+        app.isFullscreen = false;
+        syncFullscreenButton(false);
+        if (nat) {
+          const exit = document.exitFullscreen ||
+            document.webkitExitFullscreen ||
+            document.webkitCancelFullScreen ||
+            document.mozCancelFullScreen ||
+            document.msExitFullscreen;
+          if (typeof exit === 'function') {
+            try {
+              await settleQuickly(exit.call(document));
+            } catch {}
+          }
+        }
+        return false;
+      }
+
+      // Apply full-viewport TV/theater state synchronously inside the user gesture
+      // before attempting native fullscreen so restricted or hung webviews always enter fullscreen.
+      nativeFsActive = false;
+      if (html) html.setAttribute('data-fullscreen', 'true');
+      app.isFullscreen = true;
+      syncFullscreenButton(true);
+
+      const attempt = requestNativeFullscreen(html);
+      await settleQuickly(attempt);
+      if (nativeFullscreenEl()) {
+        nativeFsActive = true;
+      }
+      return true;
+    },
   };
 
-  // Keyboard handler
+  // Keyboard and fullscreen handlers
   if (typeof document !== 'undefined') {
+    const onFullscreenChange = () => {
+      const nat = Boolean(nativeFullscreenEl());
+      const html = document.documentElement;
+      if (nat) {
+        nativeFsActive = true;
+        if (html) html.setAttribute('data-fullscreen', 'true');
+        app.isFullscreen = true;
+        syncFullscreenButton(true);
+      } else if (nativeFsActive) {
+        nativeFsActive = false;
+        if (html) html.removeAttribute('data-fullscreen');
+        app.isFullscreen = false;
+        syncFullscreenButton(false);
+      }
+    };
+
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', onFullscreenChange);
+    document.addEventListener('mozfullscreenchange', onFullscreenChange);
+    document.addEventListener('MSFullscreenChange', onFullscreenChange);
+
     document.addEventListener('keydown', (e) => {
       const act = keyAction(e, { view: app.view, overlay: app.overlay });
       if (act) {
@@ -566,6 +730,14 @@ export function createApp() {
           }
         } else if (act.type === 'prev') actions.prev();
         else if (act.type === 'flag') actions.flag();
+      } else if (
+        e.key === 'Escape' &&
+        !app.overlay &&
+        app.isFullscreen &&
+        !nativeFullscreenEl()
+      ) {
+        e.preventDefault();
+        actions.toggleFullscreen();
       }
     });
 
