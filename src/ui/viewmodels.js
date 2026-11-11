@@ -79,8 +79,8 @@ export function mapLayout(exam) {
   const width = 760;
   const top = 44;
   const rowGap = 82;
-  const x0 = 60;
-  const terminusX = width - 118;
+  const x0 = 46;
+  const terminusX = width - 42;
 
   const sections = exam.sections || [];
   const firstY = top;
@@ -89,8 +89,8 @@ export function mapLayout(exam) {
   const lines = sections.map((s, i) => {
     const y = top + i * rowGap;
     const codes = Object.keys(exam.subobjectives || {}).filter(k => exam.subobjectives[k].section === s.id);
-    const start = x0 + 74 + i * 26;
-    const spacing = Math.min(128, (terminusX - 70 - start) / Math.max(1, codes.length - 1 || 1));
+    const start = x0 + 62 + i * 24;
+    const spacing = Math.min(148, (terminusX - 64 - start) / Math.max(1, codes.length - 1 || 1));
 
     const stations = codes.map((code, k) => {
       const x = Math.round(start + k * spacing);

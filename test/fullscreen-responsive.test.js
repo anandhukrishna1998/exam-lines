@@ -4,6 +4,8 @@ import { readFileSync } from 'node:fs';
 import { buildHtml } from '../build.mjs';
 import { createApp } from '../src/main.js';
 import { isFullscreenActive } from '../src/ui/chrome.js';
+import { mapLayout } from '../src/ui/viewmodels.js';
+import { PMLE, SAA } from '../src/js/exams.js';
 
 function createMockDom() {
   const attrs = new Map();
@@ -59,6 +61,26 @@ test('built HTML includes responsive viewport meta and dynamic fullscreen CSS ru
   assert.ok(html.includes('min-width: 900px'), 'Must adapt to 2x-scaled 1080p Smart TV viewports (960x540+)');
   assert.ok(html.includes('(max-width: 759px), (max-height: 620px)'), 'Must unstick topbar on narrow mobile or short TV viewports');
   assert.ok(html.includes('id="fs-toggle"') || html.includes("id: 'fs-toggle'"), 'Must include fullscreen toggle button');
+  assert.ok(!html.includes('2.8vw'), 'Must avoid wide 2.8vw side gutters on .app');
+  assert.ok(!html.includes('58vh'), 'Must avoid 58vh height clamping that letterboxes .sysmap horizontally');
+  assert.ok(html.includes('padding: 0;'), 'Must zero default body/html padding');
+  assert.ok(html.includes("updateViaCache: 'none'"), 'Must bypass HTTP cache when checking Service Worker updates');
+});
+
+test('service worker invalidates v1 cache and uses network-first for HTML documents', () => {
+  const sw = readFileSync('./src/sw.js', 'utf8');
+  assert.ok(!sw.includes("'exam-lines-v1'"), 'Must bump CACHE_NAME past exam-lines-v1 so returning users drop stale cached HTML');
+  assert.ok(sw.includes("cache: 'no-cache'"), 'Must fetch HTML/documents network-first bypassing HTTP cache');
+  assert.ok(sw.includes("e.request.mode === 'navigate'"), 'Must treat navigations as network-first documents');
+  assert.ok(sw.includes('cache.match'), 'Must retain offline cache fallback');
+});
+
+test('mapLayout spans edge-to-edge without large right-side blank margin', () => {
+  for (const exam of [PMLE, SAA]) {
+    const layout = mapLayout(exam);
+    assert.ok(layout.terminus.x >= layout.width - 50, `${exam.code} terminus x=${layout.terminus.x} should reach near width=${layout.width}`);
+    assert.ok(layout.lines[0].x0 <= 50, `${exam.code} track start x0=${layout.lines[0].x0} should start near left edge`);
+  }
 });
 
 test('manifest declares fullscreen display_override for TV/kiosk PWAs', () => {

@@ -81,6 +81,7 @@ html, body {
   width: 100%;
   min-height: 100%;
   margin: 0;
+  padding: 0;
   background-color: var(--paper);
   color: var(--ink);
 }
@@ -90,13 +91,21 @@ html:-webkit-full-screen,
 html:-moz-full-screen,
 :root:fullscreen,
 :root:-webkit-full-screen,
-:root:-moz-full-screen,
-:root[data-fullscreen="true"] {
+:root:-moz-full-screen {
   width: 100%;
   height: 100%;
   height: 100dvh;
   max-width: 100%;
   overflow-y: auto;
+  overflow-x: clip;
+  background-color: var(--paper);
+}
+
+:root[data-fullscreen="true"] {
+  width: 100%;
+  min-height: 100%;
+  min-height: 100dvh;
+  max-width: 100%;
   overflow-x: clip;
   background-color: var(--paper);
 }
@@ -127,6 +136,11 @@ body {
     font-size: clamp(17px, calc(13.5px + 0.38vw), 28px);
   }
 
+  .app {
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+  }
+
   :focus-visible {
     outline-width: 4px;
     outline-offset: 3px;
@@ -138,10 +152,10 @@ body {
   max-width: 100%;
   min-height: 100vh;
   min-height: 100dvh;
-  margin: 0 auto;
-  padding: 0 clamp(14px, 2.8vw, 56px) clamp(24px, 3.5vh, 48px);
-  padding-left: max(clamp(14px, 2.8vw, 56px), env(safe-area-inset-left));
-  padding-right: max(clamp(14px, 2.8vw, 56px), env(safe-area-inset-right));
+  margin: 0;
+  padding: 0 clamp(10px, 1vw, 18px) clamp(20px, 3vh, 40px);
+  padding-left: max(clamp(10px, 1vw, 18px), env(safe-area-inset-left));
+  padding-right: max(clamp(10px, 1vw, 18px), env(safe-area-inset-right));
   display: flex;
   flex-direction: column;
 }
@@ -510,14 +524,13 @@ button, select, input {
   width: 100%;
   min-width: 760px;
   height: auto;
-  margin: 0 auto;
+  margin: 0;
 }
 
-@media (min-width: 800px) {
+@media (min-width: 600px) {
   .sysmap {
     min-width: 0;
     width: 100%;
-    max-height: clamp(260px, 60vh, 1080px);
   }
 }
 
@@ -1442,18 +1455,18 @@ button, select, input {
 }
 
 /* Dynamic Widescreen, TV, and Fullscreen Layouts */
-@media (min-width: 900px) and (min-aspect-ratio: 4/3) {
+@media (min-width: 900px) and (orientation: landscape) {
   .page-home {
     display: grid;
     grid-template-columns: minmax(0, 1.38fr) minmax(290px, 0.92fr);
-    column-gap: clamp(16px, 2.5vw, 44px);
+    column-gap: clamp(16px, 2vw, 36px);
     row-gap: clamp(12px, 2vh, 28px);
     align-items: start;
   }
 
   .page-home .masthead {
     grid-column: 1 / -1;
-    padding: clamp(10px, 1.8vh, 28px) 0 4px;
+    padding: clamp(10px, 1.8vh, 24px) 0 4px;
   }
 
   .page-home .map-section {
@@ -1462,7 +1475,8 @@ button, select, input {
   }
 
   .page-home .map-section .sysmap {
-    max-height: clamp(240px, 58vh, 1080px);
+    width: 100%;
+    max-height: none;
   }
 
   .page-home .tickets {
@@ -1512,6 +1526,36 @@ button, select, input {
     margin: 0;
   }
 
+  .page-results {
+    display: grid;
+    grid-template-columns: minmax(0, 1.38fr) minmax(290px, 0.92fr);
+    column-gap: clamp(16px, 2vw, 36px);
+    row-gap: clamp(14px, 2vh, 24px);
+    align-items: start;
+  }
+
+  .page-results .results-map {
+    grid-column: 1;
+    grid-row: 1;
+    margin: 0;
+  }
+
+  .page-results .results-map .sysmap {
+    width: 100%;
+    max-height: none;
+  }
+
+  .page-results .arrival {
+    grid-column: 2;
+    grid-row: 1;
+    padding: 12px 0 24px;
+  }
+
+  .page-results .pair,
+  .page-results .review-section {
+    grid-column: 1 / -1;
+  }
+
   .page-results .review-list {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1521,7 +1565,7 @@ button, select, input {
   .page-history {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: clamp(16px, 2.5vw, 36px);
+    column-gap: clamp(16px, 2vw, 36px);
     row-gap: clamp(14px, 2vh, 24px);
     align-items: start;
   }
@@ -1537,13 +1581,21 @@ button, select, input {
   }
 }
 
-@media (min-width: 1200px) and (min-aspect-ratio: 4/3) {
-  .page-home {
+@media (min-width: 1200px) and (orientation: landscape) {
+  .page-home,
+  .page-results {
     grid-template-columns: minmax(0, 1.55fr) minmax(340px, 1fr);
   }
 
   .quiz-stage {
     grid-template-columns: minmax(380px, 0.92fr) minmax(440px, 1.08fr);
+  }
+}
+
+@media (min-width: 1600px) and (min-aspect-ratio: 2/1) {
+  .page-home,
+  .page-results {
+    grid-template-columns: minmax(0, 1.25fr) minmax(380px, 1fr);
   }
 }
 
@@ -1588,6 +1640,8 @@ button, select, input {
 :root[data-fullscreen="true"] .app,
 :root:fullscreen .app,
 :root:-webkit-full-screen .app {
+  padding-left: max(12px, env(safe-area-inset-left));
+  padding-right: max(12px, env(safe-area-inset-right));
   padding-bottom: max(20px, env(safe-area-inset-bottom));
 }
 

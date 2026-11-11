@@ -53,8 +53,8 @@ export function systemMap(exam, { mastery = {}, onLine, draw = false, label = tr
       svgEl('title', {}, `${word} ${line.id}: ${line.title} (about ${line.weight}% of the exam)`),
       svgEl('path', { class: 'track', d: `M${line.x0} ${line.y} H${layout.terminus.x}` }),
       svgEl('g', { class: 'badge' },
-        svgEl('circle', { cx: 28, cy: line.y, r: 17 }),
-        svgEl('text', { x: 28, y: line.y + 5, 'text-anchor': 'middle' }, String(line.id))
+        svgEl('circle', { cx: 20, cy: line.y, r: 17 }),
+        svgEl('text', { x: 20, y: line.y + 5, 'text-anchor': 'middle' }, String(line.id))
       ),
       svgEl('text', { class: 'ltitle', x: line.x0 + 4, y: line.y - 17 }, `${line.title}, ~${line.weight}%`)
     );

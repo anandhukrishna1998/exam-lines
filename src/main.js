@@ -758,9 +758,34 @@ export function createApp() {
       document.head.appendChild(link);
     }
 
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js').catch(() => {});
-    });
+    const hadController = Boolean(navigator.serviceWorker.controller);
+    let refreshing = false;
+    if (typeof navigator.serviceWorker.addEventListener === 'function') {
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!hadController || refreshing) return;
+        refreshing = true;
+        window.location.reload();
+      });
+    }
+
+    const registerSw = () => {
+      navigator.serviceWorker
+        .register('./sw.js', { updateViaCache: 'none' })
+        .then((reg) => {
+          if (reg && typeof reg.update === 'function') {
+            reg.update().catch(() => {});
+          }
+        })
+        .catch(() => {});
+    };
+
+    if (typeof document !== 'undefined' && document.readyState === 'complete') {
+      registerSw();
+    } else if (typeof window.addEventListener === 'function') {
+      window.addEventListener('load', registerSw, { once: true });
+    } else {
+      registerSw();
+    }
   }
 
   async function boot() {
