@@ -15,7 +15,22 @@ const MIME_TYPES = {
   '.ico': 'image/x-icon',
 };
 
+process.on('uncaughtException', (err) => {
+  console.error('Server caught exception:', err.message);
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('Server unhandled rejection:', reason);
+});
+
 const server = http.createServer((req, res) => {
+  req.on('error', (err) => {
+    console.error('Request error:', err.message);
+  });
+  res.on('error', (err) => {
+    console.error('Response error:', err.message);
+  });
+
   const urlPath = req.url ? req.url.split('?')[0] : '/';
   const cleanPath = urlPath === '/' ? 'index.html' : urlPath.replace(/^\/+/, '');
   const filePath = path.join(DIST_DIR, cleanPath);
@@ -27,28 +42,40 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
-    const ext = path.extname(filePath).toLowerCase();
-    const contentType = MIME_TYPES[ext] || 'application/octet-stream';
+  function streamFile(targetPath, contentType) {
     res.writeHead(200, {
       'Content-Type': contentType,
       'Cache-Control': 'no-cache',
     });
-    fs.createReadStream(filePath).pipe(res);
+    const stream = fs.createReadStream(targetPath);
+    stream.on('error', (err) => {
+      console.error('File stream error:', err.message);
+      if (!res.headersSent) {
+        res.writeHead(500, { 'Content-Type': 'text/plain' });
+      }
+      res.end();
+    });
+    stream.pipe(res);
+  }
+
+  if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+    const ext = path.extname(filePath).toLowerCase();
+    const contentType = MIME_TYPES[ext] || 'application/octet-stream';
+    streamFile(filePath, contentType);
   } else {
     // Fallback to index.html for SPA routes if file doesn't exist
     const indexPath = path.join(DIST_DIR, 'index.html');
     if (fs.existsSync(indexPath)) {
-      res.writeHead(200, {
-        'Content-Type': 'text/html; charset=utf-8',
-        'Cache-Control': 'no-cache',
-      });
-      fs.createReadStream(indexPath).pipe(res);
+      streamFile(indexPath, 'text/html; charset=utf-8');
     } else {
       res.writeHead(404, { 'Content-Type': 'text/plain' });
       res.end('Not Found. Please run `npm run build` first.');
     }
   }
+});
+
+server.on('error', (err) => {
+  console.error('HTTP Server error:', err.message);
 });
 
 server.listen(PORT, () => {
