@@ -36,6 +36,9 @@ export function themeSwitch(actions) {
     svgEl('path', { d: 'M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z', fill: 'currentColor' })
   );
 
+  const iconWrap = h('span', { class: 'theme-icon', style: 'display:inline-flex;align-items:center;' }, isDark ? moon : sun);
+  const label = h('span', { class: 'theme-label' }, isDark ? 'Dark' : 'Light');
+
   const btn = h('button', {
     class: 'theme-switch',
     role: 'switch',
@@ -47,12 +50,15 @@ export function themeSwitch(actions) {
       if (actions && typeof actions.toggleTheme === 'function') {
         const nowDark = actions.toggleTheme();
         btn.setAttribute('aria-checked', nowDark ? 'true' : 'false');
+        label.textContent = nowDark ? 'Dark' : 'Light';
+        if (iconWrap.firstChild) {
+          iconWrap.replaceChild(nowDark ? moon : sun, iconWrap.firstChild);
+        }
       }
     }
   },
-    sun,
-    h('span', { class: 'track' }, h('span', { class: 'knob' })),
-    moon
+    iconWrap,
+    label
   );
 
   return btn;
