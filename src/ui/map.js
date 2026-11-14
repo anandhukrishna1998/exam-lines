@@ -47,6 +47,17 @@ export function systemMap(exam, { mastery = {}, onLine, draw = false, label = tr
           onLine(line.id);
         }
       };
+      lineAttrs.onmouseenter = (e) => {
+        const target = e.currentTarget;
+        svg.querySelectorAll('.ride, .g-terminus').forEach(el => {
+          if (el !== target) el.style.opacity = '0.32';
+        });
+      };
+      lineAttrs.onmouseleave = () => {
+        svg.querySelectorAll('.ride, .g-terminus').forEach(el => {
+          el.style.opacity = '';
+        });
+      };
     }
 
     const gLine = svgEl('g', lineAttrs,

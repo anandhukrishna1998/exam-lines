@@ -150,7 +150,24 @@ export function overlayLayer(app, actions) {
     ];
   }
 
-  const card = h('div', { class: 'overlay-card' },
+  const card = h('div', {
+    class: 'overlay-card',
+    onkeydown: (e) => {
+      if (e.key === 'Tab') {
+        const focusables = Array.from(card.querySelectorAll('button:not(:disabled), input:not(:disabled), select:not(:disabled)'));
+        if (focusables.length === 0) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    }
+  },
     h('h2', { id: 'ov-title' }, titleText),
     h('div', { class: 'overlay-body' }, ...bodyNodes),
     h('div', { class: 'row end' }, ...buttons)

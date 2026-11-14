@@ -81,6 +81,20 @@
 
 * {
   box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: var(--rule) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--rule);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 html, body {
@@ -171,6 +185,13 @@ body {
   width: 100%;
 }
 
+.boot {
+  font-size: 16px;
+  color: var(--ink-2);
+  padding: 48px 0;
+  text-align: center;
+}
+
 :focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 2px;
@@ -210,7 +231,11 @@ h1, h2, h3, .masthead h1, .masthead h2, .brand-title {
   font-weight: 600;
   cursor: pointer;
   text-decoration: none;
-  transition: background 0.15s, border-color 0.15s;
+  transition: background-color 150ms ease, border-color 150ms ease, transform 80ms ease, opacity 150ms ease;
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
 }
 
 .btn:hover:not(:disabled) {
@@ -550,6 +575,11 @@ h1, h2, h3, .masthead h1, .masthead h2, .brand-title {
   font-size: 12px;
 }
 
+.sysmap .ride,
+.sysmap .g-terminus {
+  transition: opacity 220ms ease-out;
+}
+
 .sysmap .track {
   fill: none;
   stroke: var(--line);
@@ -558,7 +588,6 @@ h1, h2, h3, .masthead h1, .masthead h2, .brand-title {
   transition: stroke-width 0.2s;
 }
 
-.sysmap .g-line:hover .track,
 .sysmap .ride:hover .track {
   stroke-width: 13px;
   cursor: pointer;
@@ -1328,6 +1357,7 @@ h1, h2, h3, .masthead h1, .masthead h2, .brand-title {
   align-items: center;
   justify-content: center;
   padding: 16px;
+  animation: fadeIn 200ms ease-out;
 }
 
 :root[data-theme="dark"] .overlay,
@@ -1347,6 +1377,28 @@ h1, h2, h3, .masthead h1, .masthead h2, .brand-title {
   border-radius: 12px;
   padding: 24px 28px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  animation: scaleIn 200ms ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .overlay-card,
+  .btn,
+  .sysmap .ride,
+  .sysmap .g-terminus {
+    animation: none;
+    transition: none;
+  }
 }
 
 .overlay-card h2 {
