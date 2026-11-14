@@ -1,69 +1,75 @@
 :root {
   color-scheme: light;
-  --paper: #F5F6F3;
-  --panel: #FFFFFF;
-  --ink: #1B1F24;
-  --ink-2: #4A515A;
-  --ink-3: #6E767F;
-  --rule: #D5DAD4;
-  --rule-2: #E7EAE5;
+  --paper: #F5F4F0;
+  --panel: #FCFCFA;
+  --ink: #18181B;
+  --ink-2: #3F3F46;
+  --ink-3: #57575E;
+  --rule: #DDDAD2;
+  --rule-2: #ECEAE4;
   --on-line: #FFFFFF;
-  --l1: #D52B1E;
-  --l2: #0B5FA5;
-  --l3: #00864A;
-  --l4: #D97800;
-  --l5: #8C3C96;
-  --l6: #00838F;
-  --ok: #0E7A3E;
-  --bad: #C4271F;
+  --accent: #C83226;
+  --on-accent: #FFFFFF;
+  --l1: #C83226;
+  --l2: #1B5EBF;
+  --l3: #167C4D;
+  --l4: #C47F17;
+  --l5: #6F42A6;
+  --l6: #117A84;
+  --ok: #167C4D;
+  --bad: #C83226;
   --flag: #A45F00;
-  --focus: #0B5FA5;
+  --focus: #C83226;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --paper: #15181C;
-    --panel: #1D2126;
-    --ink: #E8EAE6;
-    --ink-2: #B4BAC0;
-    --ink-3: #8C939A;
-    --rule: #333A42;
-    --rule-2: #262B31;
-    --on-line: #111417;
-    --l1: #FF6B5F;
-    --l2: #5AAEFF;
-    --l3: #3DD184;
-    --l4: #FFAE45;
-    --l5: #D08BDB;
-    --l6: #3CCFDB;
-    --ok: #44D07F;
-    --bad: #FF7468;
-    --flag: #FFB84D;
-    --focus: #5AAEFF;
+    --paper: #141416;
+    --panel: #1C1C1F;
+    --ink: #F0EFEA;
+    --ink-2: #C8C8CC;
+    --ink-3: #9B9B9E;
+    --rule: #303036;
+    --rule-2: #232328;
+    --on-line: #141416;
+    --accent: #F26D5B;
+    --on-accent: #141416;
+    --l1: #F26D5B;
+    --l2: #5E9BFF;
+    --l3: #45C49E;
+    --l4: #F2B04C;
+    --l5: #BB9AF7;
+    --l6: #4FD6BE;
+    --ok: #45C49E;
+    --bad: #F26D5B;
+    --flag: #F2B04C;
+    --focus: #F26D5B;
   }
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --paper: #15181C;
-  --panel: #1D2126;
-  --ink: #E8EAE6;
-  --ink-2: #B4BAC0;
-  --ink-3: #8C939A;
-  --rule: #333A42;
-  --rule-2: #262B31;
-  --on-line: #111417;
-  --l1: #FF6B5F;
-  --l2: #5AAEFF;
-  --l3: #3DD184;
-  --l4: #FFAE45;
-  --l5: #D08BDB;
-  --l6: #3CCFDB;
-  --ok: #44D07F;
-  --bad: #FF7468;
-  --flag: #FFB84D;
-  --focus: #5AAEFF;
+  --paper: #141416;
+  --panel: #1C1C1F;
+  --ink: #F0EFEA;
+  --ink-2: #C8C8CC;
+  --ink-3: #9B9B9E;
+  --rule: #303036;
+  --rule-2: #232328;
+  --on-line: #141416;
+  --accent: #F26D5B;
+  --on-accent: #141416;
+  --l1: #F26D5B;
+  --l2: #5E9BFF;
+  --l3: #45C49E;
+  --l4: #F2B04C;
+  --l5: #BB9AF7;
+  --l6: #4FD6BE;
+  --ok: #45C49E;
+  --bad: #F26D5B;
+  --flag: #F2B04C;
+  --focus: #F26D5B;
 }
 
 .l1 { --line: var(--l1); }
@@ -117,7 +123,7 @@ html:-moz-full-screen,
 }
 
 body {
-  font-family: 'Overpass', "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-family: 'Onest', "Segoe UI", system-ui, -apple-system, sans-serif;
   font-variant-numeric: tabular-nums;
   font-size: clamp(16px, calc(13px + 0.35vw), 26px);
   line-height: 1.55;
@@ -233,7 +239,7 @@ button, select, input {
 
 .btn.stop:hover:not(:disabled) {
   background: var(--bad);
-  color: #FFFFFF;
+  color: var(--on-accent);
 }
 
 /* Sticky Topbar */
@@ -539,7 +545,7 @@ button, select, input {
 }
 
 .sysmap .tname, .sysmap .tsub {
-  fill: var(--paper);
+  fill: var(--ink);
   font-weight: 800;
   font-size: 12px;
 }
@@ -793,13 +799,13 @@ button, select, input {
 .stop-item button.s.correct {
   border-color: var(--ok);
   background: var(--ok);
-  color: #FFFFFF;
+  color: var(--on-line);
 }
 
 .stop-item button.s.wrong {
   border-color: var(--bad);
   background: var(--bad);
-  color: #FFFFFF;
+  color: var(--on-line);
 }
 
 .stop-item button.s.flagged {
@@ -832,7 +838,7 @@ button, select, input {
   height: 28px;
   border-radius: 50%;
   background: var(--line, var(--ink));
-  color: var(--on-line, #FFFFFF);
+  color: var(--on-line);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -876,7 +882,7 @@ button, select, input {
 
 .tag-ai {
   background: var(--l2);
-  color: #FFFFFF;
+  color: var(--on-line);
 }
 
 .clock {
@@ -970,13 +976,13 @@ button, select, input {
 .opt.correct .opt-key {
   border-color: var(--ok);
   background: var(--ok);
-  color: #FFFFFF;
+  color: var(--on-line);
 }
 
 .opt.wrong .opt-key {
   border-color: var(--bad);
   background: var(--bad);
-  color: #FFFFFF;
+  color: var(--on-line);
 }
 
 .opt-body {

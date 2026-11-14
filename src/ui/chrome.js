@@ -17,7 +17,15 @@ export const STORE_LABELS = {
 };
 
 export function themeSwitch(actions) {
-  const isDark = typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme') === 'dark';
+  const isDark = typeof document !== 'undefined' && Boolean(document.documentElement) && (
+    document.documentElement.getAttribute('data-theme') === 'dark' ||
+    (
+      document.documentElement.getAttribute('data-theme') !== 'light' &&
+      typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function' &&
+      Boolean(window.matchMedia('(prefers-color-scheme: dark)')?.matches)
+    )
+  );
 
   const sun = svgEl('svg', { viewBox: '0 0 24 24', width: '16', height: '16', class: 'icon-sun' },
     svgEl('circle', { cx: '12', cy: '12', r: '4', fill: 'currentColor' }),
