@@ -434,7 +434,7 @@ h1, h2, h3, .masthead h1, .masthead h2, .brand-title {
   align-items: center;
   gap: 6px;
   padding: 5px 10px;
-  border: 2px solid var(--rule);
+  border: 1px solid var(--rule);
   border-radius: 6px;
   font-size: 13px;
 }
@@ -651,7 +651,7 @@ h1, h2, h3, .masthead h1, .masthead h2, .brand-title {
 
 .ticket {
   display: flex;
-  border: 2px solid var(--ink);
+  border: 1px solid var(--rule);
   border-radius: 8px;
   background: var(--panel);
   overflow: hidden;
@@ -693,7 +693,7 @@ h1, h2, h3, .masthead h1, .masthead h2, .brand-title {
 
 .stub {
   width: 90px;
-  border-left: 2px dashed var(--ink);
+  border-left: 1px dashed var(--rule);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -773,7 +773,7 @@ h1, h2, h3, .masthead h1, .masthead h2, .brand-title {
   width: 32px;
   height: 32px;
   border-radius: 16px;
-  border: 2px solid var(--rule);
+  border: 1px solid var(--rule);
   background: var(--panel);
   color: var(--ink-2);
   font-size: 12px;
@@ -927,7 +927,7 @@ h1, h2, h3, .masthead h1, .masthead h2, .brand-title {
   align-items: flex-start;
   gap: 14px;
   padding: 14px;
-  border: 2px solid var(--rule);
+  border: 1px solid var(--rule);
   border-radius: 6px;
   background: var(--panel);
   text-align: left;
@@ -946,12 +946,12 @@ h1, h2, h3, .masthead h1, .masthead h2, .brand-title {
 
 .opt.correct {
   border-color: var(--ok);
-  background: rgba(14, 122, 62, 0.08);
+  background: color-mix(in srgb, var(--ok) 8%, transparent);
 }
 
 .opt.wrong {
   border-color: var(--bad);
-  background: rgba(196, 39, 31, 0.08);
+  background: color-mix(in srgb, var(--bad) 8%, transparent);
 }
 
 .opt-key {
@@ -959,7 +959,7 @@ h1, h2, h3, .masthead h1, .masthead h2, .brand-title {
   height: 36px;
   min-width: 36px;
   border-radius: 50%;
-  border: 2px solid var(--ink-3);
+  border: 1px solid var(--rule);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1002,13 +1002,13 @@ h1, h2, h3, .masthead h1, .masthead h2, .brand-title {
 .feedback {
   padding: clamp(14px, 1.2vw, 22px);
   border-radius: 6px;
-  background: rgba(14, 122, 62, 0.1);
-  border-left: 4px solid var(--ok);
+  background: color-mix(in srgb, var(--ok) 10%, transparent);
+  border-left: 3px solid var(--ok);
   margin: 16px 0;
 }
 
 .feedback.bad {
-  background: rgba(196, 39, 31, 0.1);
+  background: color-mix(in srgb, var(--bad) 10%, transparent);
   border-left-color: var(--bad);
 }
 
@@ -1070,7 +1070,7 @@ h1, h2, h3, .masthead h1, .masthead h2, .brand-title {
   gap: 32px;
   flex-wrap: wrap;
   padding: 32px 0;
-  border-bottom: 2px solid var(--ink);
+  border-bottom: 1px solid var(--rule);
 }
 
 .arrival-score {
@@ -1123,9 +1123,9 @@ h1, h2, h3, .masthead h1, .masthead h2, .brand-title {
 }
 
 .bar .track {
-  height: 10px;
-  background: var(--rule);
-  border-radius: 5px;
+  height: 6px;
+  background: var(--rule-2);
+  border-radius: 3px;
   overflow: hidden;
   margin: 4px 0;
 }
@@ -1134,7 +1134,7 @@ h1, h2, h3, .masthead h1, .masthead h2, .brand-title {
   display: block;
   height: 100%;
   background: var(--line, var(--ink));
-  border-radius: 5px;
+  border-radius: 3px;
 }
 
 .bar .sub {
@@ -1182,7 +1182,7 @@ h1, h2, h3, .masthead h1, .masthead h2, .brand-title {
 .review-item {
   background: var(--panel);
   border: 1px solid var(--rule);
-  border-left: 6px solid var(--line, var(--rule));
+  border-left: 3px solid var(--line, var(--rule));
   border-radius: 6px;
   padding: 20px;
 }
@@ -1232,11 +1232,11 @@ h1, h2, h3, .masthead h1, .masthead h2, .brand-title {
 }
 
 .ropts li.correct {
-  background: rgba(14, 122, 62, 0.08);
+  background: color-mix(in srgb, var(--ok) 8%, transparent);
 }
 
 .ropts li.chosen:not(.correct) {
-  background: rgba(196, 39, 31, 0.08);
+  background: color-mix(in srgb, var(--bad) 8%, transparent);
 }
 
 .ropt-key {
@@ -1305,12 +1305,13 @@ h1, h2, h3, .masthead h1, .masthead h2, .brand-title {
 
 .journeys-table th, .journeys-table td {
   padding: 10px 12px;
-  border-bottom: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule-2);
 }
 
 .journeys-table th {
   font-weight: 700;
   color: var(--ink-2);
+  border-bottom: 1px solid var(--rule);
 }
 
 .td-score {
@@ -1321,7 +1322,7 @@ h1, h2, h3, .masthead h1, .masthead h2, .brand-title {
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(10, 12, 14, 0.6);
+  background: rgba(0, 0, 0, 0.45);
   z-index: 1000;
   display: flex;
   align-items: center;
@@ -1329,15 +1330,23 @@ h1, h2, h3, .masthead h1, .masthead h2, .brand-title {
   padding: 16px;
 }
 
+:root[data-theme="dark"] .overlay,
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .overlay {
+    background: rgba(0, 0, 0, 0.6);
+  }
+}
+
 .overlay-card {
   width: 100%;
-  max-width: min(92vw, 540px);
+  max-width: min(92vw, 480px);
   max-height: 90vh;
   overflow-y: auto;
   background: var(--panel);
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 24px 28px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
 }
 
 .overlay-card h2 {
@@ -1446,17 +1455,17 @@ h1, h2, h3, .masthead h1, .masthead h2, .brand-title {
 }
 
 .verdict-correct {
-  background: rgba(14, 122, 62, 0.14);
+  background: color-mix(in srgb, var(--ok) 14%, transparent);
   color: var(--ok);
 }
 
 .verdict-missed {
-  background: rgba(196, 39, 31, 0.14);
+  background: color-mix(in srgb, var(--bad) 14%, transparent);
   color: var(--bad);
 }
 
 .tag-flagged {
-  background: rgba(164, 95, 0, 0.16);
+  background: color-mix(in srgb, var(--flag) 16%, transparent);
   color: var(--flag);
 }
 
