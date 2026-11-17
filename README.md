@@ -1,10 +1,14 @@
 # Exam Lines 🚇
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-anandhukrishna1998.github.io%2Fexam--lines-red?style=for-the-badge&logo=github)](https://anandhukrishna1998.github.io/exam-lines/)
+
+> **Live Application**: **[https://anandhukrishna1998.github.io/exam-lines/](https://anandhukrishna1998.github.io/exam-lines/)**
+
 **Exam Lines** is an interactive, transit-map styled certification practice platform designed for modern cloud certifications:
 - **Google Cloud Professional Machine Learning Engineer (PMLE)** — 6 lines, 14 stations, 50-question 120-minute timed simulation.
 - **AWS Certified Solutions Architect – Associate (SAA-C03)** — 4 lines, 14 stations, 65-question 130-minute timed simulation.
 
-Styled as an interactive subway transit network, learners navigate through knowledge domains as transit lines, mastering sub-objectives as stations along the way.
+Styled as an interactive subway transit network with a refined **Ceramic & Signal Line Minimal** dual-theme interface, learners navigate through knowledge domains as transit lines, mastering sub-objectives as stations along the way.
 
 ---
 
